@@ -1,7 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import pino from 'pino-http';
-import contactsRouter from './routes/contacts.js';
+import express from "express";
+import cors from "cors";
+import pino from "pino-http";
+import contactsRouter from "./routes/contacts.js";
 
 export const setupServer = () => {
   const app = express();
@@ -10,12 +10,10 @@ export const setupServer = () => {
   app.use(pino());
   app.use(express.json());
 
-  // Роут для контактів
-  app.use('/contacts', contactsRouter);
+  app.use("/contacts", contactsRouter);
 
-  // 404
-  app.use('*', (req, res) => {
-    res.status(404).json({ message: 'Not found' });
+  app.use((req, res) => {
+    res.status(404).json({ message: "Not found" });
   });
 
   const PORT = process.env.PORT || 3000;
