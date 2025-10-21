@@ -10,6 +10,15 @@ export const setupServer = () => {
   app.use(pino());
   app.use(express.json());
 
+  app.get("/", (req, res) => {
+    res.json({
+      message: "Welcome to the Contacts API 👋",
+      endpoints: {
+        contacts: "/contacts"
+      }
+    });
+  });
+
   app.use("/contacts", contactsRouter);
 
   app.use((req, res) => {
