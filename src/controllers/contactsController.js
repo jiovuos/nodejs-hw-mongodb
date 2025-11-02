@@ -18,7 +18,10 @@ export const getAllContactsController = async (req, res, next) => {
       isFavourite
     } = req.query;
 
+    const userId = req.user?.userId || req.user?.id || null;
+
     const result = await getContacts({
+      userId,
       page: Number(page),
       perPage: Number(perPage),
       sortBy,
@@ -40,7 +43,9 @@ export const getAllContactsController = async (req, res, next) => {
 export const getContactByIdController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const userId = req.user?.userId || req.user?.id || null;
+
+    const contact = await getContactById(contactId, userId);
 
     if (!contact) {
       throw createHttpError(404, "Contact not found");
@@ -58,7 +63,10 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res, next) => {
   try {
-    const newContact = await createContact(req.body);
+    const userId = req.user?.userId || req.user?.id || null;
+    const payload = { ...req.body, userId };
+
+    const newContact = await createContact(payload);
 
     res.status(201).json({
       status: 201,
@@ -73,7 +81,9 @@ export const createContactController = async (req, res, next) => {
 export const updateContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const updated = await updateContact(contactId, req.body);
+    const userId = req.user?.userId || req.user?.id || null;
+
+    const updated = await updateContact(contactId, userId, req.body);
 
     if (!updated) {
       throw createHttpError(404, "Contact not found");
@@ -92,7 +102,9 @@ export const updateContactController = async (req, res, next) => {
 export const deleteContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const deleted = await deleteContact(contactId);
+    const userId = req.user?.userId || req.user?.id || null;
+
+    const deleted = await deleteContact(contactId, userId);
 
     if (!deleted) {
       throw createHttpError(404, "Contact not found");

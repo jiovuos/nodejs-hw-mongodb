@@ -1,7 +1,9 @@
 import { Contact } from "../models/Contact.js";
+import mongoose from "mongoose";
 
 export const getContacts = async (options = {}) => {
   const {
+    userId,
     page = 1,
     perPage = 10,
     sortBy = "name",
@@ -9,6 +11,18 @@ export const getContacts = async (options = {}) => {
     type,
     isFavourite
   } = options;
+
+  if (!userId) {
+    return {
+      data: [],
+      page: 1,
+      perPage: perPage,
+      totalItems: 0,
+      totalPages: 1,
+      hasPreviousPage: false,
+      hasNextPage: false
+    };
+  }
 
   const pageNum = Math.max(1, Number(page) || 1);
   const perPageNum = Math.max(1, Number(perPage) || 10);
@@ -18,7 +32,7 @@ export const getContacts = async (options = {}) => {
   const sortDirection = sortOrder === "desc" ? -1 : 1;
   const sort = { [sortBy]: sortDirection };
 
-  const filter = {};
+  const filter = { userId: mongoose.Types.ObjectId(userId) };
   if (type) {
     filter.contactType = type;
   }
@@ -49,22 +63,20 @@ export const getContacts = async (options = {}) => {
   };
 };
 
-export const getAllContacts = async () => {
-  return await Contact.find();
-};
-
-export const getContactById = async (id) => {
-  return await Contact.findById(id);
+export const getContactById = async (id, userId) => {
+  return await Contact.findOne({ _id: id, userId });
 };
 
 export const createContact = async (data) => {
   return await Contact.create(data);
 };
 
-export const updateContact = async (id, data) => {
-  return await Contact.findByIdAndUpdate(id, data, { new: true });
+export const updateContact = async (id, userId, data) => {
+  return await Contact.findOneAndUpdate({ _id: id, userId }, data, {
+    new: true
+  });
 };
 
-export const deleteContact = async (id) => {
-  return await Contact.findByIdAndDelete(id);
+export const deleteContact = async (id, userId) => {
+  return await Contact.findOneAndDelete({ _id: id, userId });
 };

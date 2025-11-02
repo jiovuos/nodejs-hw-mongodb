@@ -9,12 +9,15 @@ import {
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
 import { isValidId } from "../middlewares/isValidId.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 import {
   createContactSchema,
   updateContactSchema
 } from "../validation/contactSchemas.js";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.get("/", ctrlWrapper(getAllContactsController));
 
