@@ -13,7 +13,7 @@ export const authMiddleware = async (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, ACCESS_SECRET);
-    if (!payload || !payload.userId) {
+    if (!payload?.userId) {
       return next(createHttpError(401, "Invalid token payload"));
     }
 

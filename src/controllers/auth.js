@@ -50,7 +50,7 @@ export const login = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
@@ -100,12 +100,9 @@ export const refresh = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     const token = req.cookies.refreshToken;
-    if (token) {
-      await Session.findOneAndDelete({ refreshToken: token });
-    }
+    if (token) await Session.findOneAndDelete({ refreshToken: token });
 
     res.clearCookie("refreshToken");
-
     res.status(204).send();
   } catch (e) {
     next(e);
